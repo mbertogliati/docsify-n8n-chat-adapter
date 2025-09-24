@@ -2,11 +2,12 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
 
 const banner = `/*! @mbertogliati/docsify-n8n-chat-adapter | MIT License */`;
 
 export default {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   // Treat any http/https imports (e.g., CDN dynamic imports) as external
   external: (id) => /^https?:\/\//.test(id),
   output: [
@@ -37,6 +38,7 @@ export default {
   plugins: [
     resolve(),
     commonjs(),
+    typescript({ tsconfig: './tsconfig.json' }),
     replace({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
       preventAssignment: true,

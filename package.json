@@ -26,6 +26,7 @@
   "files": [
     "dist",
     "src",
+    "src/n8n-chat-adapter.css",
     "LICENSE",
     "README.md"
   ],
@@ -33,7 +34,11 @@
   "scripts": {
     "build": "rollup -c",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "serve:demo": "node demo/server.mjs",
+    "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
   "keywords": [
     "docsify",
@@ -48,6 +53,11 @@
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.22.4"
+    "@rollup/plugin-typescript": "^11.1.6",
+    "rollup": "^4.22.4",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1",
+    "jsdom": "^25.0.0"
   }
 }
