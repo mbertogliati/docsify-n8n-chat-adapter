@@ -1,0 +1,275 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* n8n Chat theming for Docsify
+   - Uses CSS variables provided by @n8n/chat
+   - Light/dark aware via prefers-color-scheme
+   - Avoids !important except where stacking context is critical
+*/
+
+#n8n-chat {
+  /* Palette (light) - inherit from Docsify Themeable when available */
+  --chat--color-primary: var(--theme-color, #10a37f);
+  --chat--color-primary-shade-50: color-mix(in oklab, var(--chat--color-primary) 85%, black);
+  --chat--color-primary-shade-100: color-mix(in oklab, var(--chat--color-primary) 70%, black);
+  --chat--color-secondary: var(--theme-color, #19c37d);
+  --chat--color-white: #ffffff;
+  --chat--color-light: var(--base-background-color, #ffffff);
+  --chat--color-light-shade-50: var(--border-color, #ececf1);
+  --chat--color-light-shade-100: color-mix(in oklab, var(--chat--color-light-shade-50) 70%, #0000);
+  --chat--color-medium: #c9c9d2;
+  --chat--color-dark: var(--base-color, #202123);
+  --chat--color-disabled: #8e8ea0;
+  --chat--color-typing: #40414f;
+
+  /* Base layout */
+  --chat--spacing: 1rem;
+  --chat--border-radius: 0.75rem;
+  --chat--transition-duration: 0.12s;
+  --chat--font-family: var(--base-font-family, 'Inter'), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+
+  /* Window (floating mode) */
+  --chat--window--width: 480px;
+  --chat--window--height: 640px;
+  --chat--window--bottom: var(--chat--spacing);
+  --chat--window--right: var(--chat--spacing);
+  --chat--window--z-index: 99999; /* keep above Docsify sidebar/header */
+  --chat--window--border: 1px solid var(--border-color, var(--chat--color-light-shade-50));
+  --chat--window--border-radius: 1rem;
+  --chat--window--margin-bottom: var(--chat--spacing);
+
+  /* Header */
+  --chat--header-height: auto;
+  --chat--header--padding: calc(var(--chat--spacing) * 1.25);
+  --chat--header--background: var(--base-background-color);
+  --chat--header--color: var(--chat--color-dark);
+  --chat--header--border-top: none;
+  --chat--header--border-bottom: none;
+  --chat--header--border-left: none;
+  --chat--header--border-right: none;
+  --chat--heading--font-size: var(--heading-h1-font-size, 1.35rem);
+  --chat--subtitle--font-size: 0.95rem;
+  --chat--subtitle--line-height: 1.6;
+
+  /* Messages */
+  --chat--message--font-size: var(--base-font-size, 1rem);
+  --chat--message--padding: 0.875rem 1rem;
+  --chat--message--border-radius: var(--chat--border-radius);
+  --chat--message-line-height: 1.6;
+  --chat--message--margin-bottom: 0.75rem;
+  --chat--message--bot--background: var(--base-background-color, #fff);
+  --chat--message--bot--color: var(--base-color, #202123);
+  --chat--message--bot--border: 1px solid var(--border-color, var(--chat--color-light-shade-100));
+  --chat--message--user--background: var(--base-background-color, #fff);
+  --chat--message--user--color: var(--base-color, #202123);
+  --chat--message--user--border: 1px solid var(--border-color, var(--chat--color-light-shade-100));
+  --chat--message--pre--background: #0b0f19;
+  --chat--messages-list--padding: calc(var(--chat--spacing) * 1.25) var(--chat--spacing);
+
+  /* Toggle button */
+  --chat--toggle--size: 56px;
+  --chat--toggle--background: var(--chat--color-primary);
+  --chat--toggle--hover--background: var(--chat--color-primary-shade-50);
+  --chat--toggle--active--background: var(--chat--color-primary-shade-100);
+  --chat--toggle--color: var(--chat--color-white);
+
+  /* Input area */
+  --chat--textarea--height: 56px;
+  /* Limit how tall the input can grow before scrolling */
+  --chat--textarea--max-height: 12rem;
+  --chat--input--font-size: var(--base-font-size, 0.95rem);
+  --chat--input--border: 1px solid var(--border-color, var(--chat--color-light-shade-100));
+  --chat--input--border-radius: 1.25rem;
+  --chat--input--padding: 0.85rem 1rem;
+  --chat--input--background: var(--chat--color-light);
+  --chat--input--text-color: var(--chat--color-dark);
+  --chat--input--line-height: 1.5;
+  --chat--input--placeholder--font-size: var(--chat--input--font-size);
+  --chat--input--border-active: 1px solid color-mix(in oklab, var(--chat--color-primary) 35%, transparent);
+  --chat--input--left--panel--width: 0;
+
+  /* Buttons */
+  --chat--button--color: var(--chat--color-white);
+  --chat--button--background: var(--chat--color-primary);
+  --chat--button--padding: 0.5rem 0.875rem;
+  --chat--button--border-radius: 0.5rem;
+  --chat--button--hover--color: var(--chat--color-white);
+  --chat--button--hover--background: var(--chat--color-primary-shade-50);
+  --chat--close--button--color-hover: var(--chat--color-primary);
+
+  /* Send button explicit vars (fallback to primary palette) */
+  --chat--input--send--button--background: var(--chat--button--background);
+  --chat--input--send--button--background-hover: var(--chat--button--hover--background);
+  --chat--input--send--button--color: var(--chat--button--color);
+  --chat--input--send--button--color-hover: var(--chat--button--hover--color);
+
+  /* Footer/background */
+  --chat--body--background: var(--base-background-color, inherit);
+  --chat--footer--background: var(--base-background-color, inherit);
+  --chat--footer--color: var(--base-color, var(--chat--color-dark));
+}
+
+/* No explicit dark block: we rely on Themeable swapping the base variables in its dark CSS */
+
+/* Typography scope: keep code blocks intact */
+#n8n-chat, #n8n-chat *:not(code):not(pre):not(pre *) {
+  font-family: var(--chat--font-family);
+}
+
+/* Keep chat above Docsify chrome without layout overrides */
+.chat__toggle, .chat__window { z-index: var(--chat--window--z-index); }
+
+/* Window wrapper: background, border and proper column layout */
+.chat-wrapper {
+  background: var(--chat--body--background, inherit);
+  border: var(--chat--window--border);
+  border-radius: var(--chat--window--border-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: var(--chat--window--height);
+}
+
+/* Ensure the internal window container inherits the same background */
+.chat-window { background: var(--chat--body--background, inherit); }
+
+/* Subtle header/body alignment */
+.chat-header {background: var(--chat--header--background); border: 0;}
+.chat-heading h1 {
+  font-size: var(--chat--heading--font-size); color: var(--chat--header--color); font-weight: 600;
+}
+.chat-header > p { color: #6b7280; margin-top: 0.25rem; }
+.chat-layout .chat-header{
+  gap: 0;
+}
+/* Message list rhythm */
+.chat-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: var(--chat--messages-list--padding);
+  background: var(--chat--body--background);
+}
+
+/* Bubble feel */
+.chat-message { max-width: min(720px, 92%); border-radius: var(--chat--message--border-radius); }
+.chat-message .chat-message-markdown { padding: var(--chat--message--padding); }
+.chat-message-from-bot { background: var(--chat--message--bot--background); color: var(--chat--message--bot--color); border: var(--chat--message--bot--border); margin-right: auto; }
+.chat-message-from-user { background: color-mix(in oklab, var(--chat--message--user--background) 94%, var(--chat--color-primary)); border: 1px solid var(--border-color, #e5e7eb); margin-left: auto; }
+
+/* Markdown defaults */
+.chat-message-markdown { font-size: var(--chat--message--font-size); line-height: var(--chat--message-line-height); }
+.chat-message-markdown h1 { font-size: 1.15rem; }
+.chat-message-markdown h2 { font-size: 1.075rem; }
+.chat-message-markdown h3 { font-size: 1.025rem; }
+.chat-message-markdown p + p { margin-top: 0.75rem; }
+.chat-message-markdown ul, .chat-message-markdown ol { margin: 0.5rem 0 0.5rem 1.25rem; }
+.chat-message-markdown a { color: var(--link-color, var(--chat--color-primary)); text-decoration: underline; text-underline-offset: 2px; }
+.chat-message-markdown blockquote { border-left: 3px solid var(--chat--color-light-shade-100); margin: 0.5rem 0; padding: 0.25rem 0 0.25rem 0.75rem; color: #4b5563; background: #fafafa; border-radius: 0.25rem; }
+
+/* Code readability */
+.chat-message-markdown :not(pre) > code { background: #f4f4f5; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.375rem; padding: 0.1rem 0.35rem; font-family: var(--code-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace); font-size: 0.9em; }
+.chat-message-markdown pre { background: var(--chat--message--pre--background); color: #e7eaf3; border-radius: 0.75rem; padding: 0.9rem 1rem; overflow: auto; border: 1px solid #0f1425; }
+.chat-message-markdown pre code { background: transparent; border: 0; padding: 0; color: inherit; }
+
+/* Footer/input */
+.chat-body { flex: 1; overflow-y: auto; background: var(--base-background-color); }
+/* Cap footer height so long inputs don't push the window off-screen */
+.chat-footer { background: var(--base-background-color); border-top: 1px solid var(--border-color); padding: calc(var(--chat--spacing) * 0.75) var(--chat--spacing); max-height: calc(var(--chat--textarea--max-height) + 4.5rem); overflow-y: auto;  }
+/* Make input row robust: textarea takes remaining space, button stays visible */
+.chat-input { background: var(--base-background-color); border: 0; border-radius: var(--chat--input--border-radius); transition: border-color var(--chat--transition-duration), box-shadow var(--chat--transition-duration); display: grid; grid-template-columns: 1fr auto; align-items: end; }
+.chat-input .chat-inputs { gap: 0.5rem;}
+/* Control textarea growth and enable vertical scrolling */
+.chat-input textarea { background: transparent; border: 0; outline: 0; resize: none; padding: var(--chat--input--padding); font-size: var(--chat--input--font-size); line-height: var(--chat--input--line-height); color: var(--base-color); min-height: var(--chat--textarea--height); max-height: var(--chat--textarea--max-height); overflow-y: auto; }
+.chat-input-send-button { background: var(--chat--input--send--button--background); color: var(--chat--input--send--button--color); border-radius: 0.5rem; transition: background var(--chat--transition-duration)}
+.chat-input-send-button:hover:not([disabled]) { background: var(--chat--input--send--button--background-hover); color: var(--chat--input--send--button--color-hover); }
+.chat-input-send-button[disabled] { opacity: 0.6; filter: grayscale(0.2); }
+
+/* Responsive */
+@media (max-width: 540px) {
+  .chat-message { max-width: 100%; }
+  :root { --chat--window--width: 100vw; }
+}
+
+/* Overrides and positioning for @n8n/chat when used in Docsify */
+#n8n-chat-root { position: relative; z-index: 9999; }
+
+/* Dock left option */
+#n8n-chat-root.n8n-left .chat__toggle { left: 20px !important; right: auto !important; }
+#n8n-chat-root.n8n-left .chat__window { left: 20px !important; right: auto !important; }
+
+/* Custom launcher icon when data-icon is present */
+#n8n-chat-root.n8n-custom-icon .chat__toggle {
+  background-size: cover !important;
+  background-position: center !important;
+}
+#n8n-chat-root.n8n-custom-icon .chat__toggle svg { display: none !important; }
+
+.chat-body{
+  overflow-y: scroll !important;
+}
+
+main.chat-layout.chat-wrapper{
+  min-height: 0;
+}
+
+/* Reset button styling to match Docsify theme + chat buttons */
+.chat-header {
+  position: relative;
+}
+
+.chat-reset-button {
+  position: absolute;
+  top: 0.85rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid color-mix(in oklab, var(--theme-color, var(--chat--color-primary)) 70%, #0000);
+  background: transparent;
+  color: var(--theme-color, var(--chat--color-primary));
+  font: 500 0.875rem/1 var(--chat--font-family);
+  padding: 0.4rem 0.75rem;
+  border-radius: 9999px; /* pill */
+  cursor: pointer;
+  transition: background var(--chat--transition-duration), color var(--chat--transition-duration), border-color var(--chat--transition-duration), box-shadow var(--chat--transition-duration);
+}
+
+.chat-reset-button .icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+}
+
+.chat-reset-button .label {
+  white-space: nowrap;
+}
+
+.chat-reset-button:hover {
+  background: var(--theme-color, var(--chat--color-primary));
+  color: var(--chat--color-white);
+  border-color: color-mix(in oklab, var(--theme-color, var(--chat--color-primary)) 85%, #0000);
+}
+
+.chat-reset-button:active {
+  background: color-mix(in oklab, var(--theme-color, var(--chat--color-primary)) 85%, #0000);
+  color: var(--chat--color-white);
+}
+
+.chat-reset-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--theme-color, var(--chat--color-primary)) 25%, #0000);
+}
+
+.chat-reset-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Ensure header content doesn't overlap with the reset button on small widths */
+@media (max-width: 540px) {
+  .chat-header {
+    padding-right: 4.25rem; /* reserve space for the button */
+  }
+}

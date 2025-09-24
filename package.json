@@ -1,0 +1,53 @@
+{
+  "name": "@mbertogliati/docsify-n8n-chat-adapter",
+  "version": "0.1.0",
+  "description": "Docsify plugin that embeds @n8n/chat with session and UI persistence workarounds.",
+  "license": "MIT",
+  "author": "Matias Bertogliati <matias.bertogliati@gmail.com>",
+  "homepage": "https://github.com/mbertogliati/docsify-n8n-chat-adapter#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbertogliati/docsify-n8n-chat-adapter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mbertogliati/docsify-n8n-chat-adapter/issues"
+  },
+  "type": "module",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.esm.js",
+  "unpkg": "dist/index.umd.min.js",
+  "jsdelivr": "dist/index.umd.min.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup -c",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "docsify",
+    "plugin",
+    "n8n",
+    "chat",
+    "widget",
+    "adapter"
+  ],
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-replace": "^5.0.7",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.22.4"
+  }
+}
