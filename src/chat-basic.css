@@ -103,4 +103,8 @@
 }
 
 /* Error banner */
-.chat-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 10px 12px; border-radius: 10px; font-size: 13px; margin: 6px 0; }
+.chat-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 10px 12px; border-radius: 10px; font-size: 13px; margin: 6px 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.chat-error-text { flex: 1; }
+.chat-error-actions { display: inline-flex; gap: 8px; }
+.chat-error-retry { background: transparent; color: #991b1b; border: 1px solid #fecaca; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+.chat-error-retry:hover { background: #fee2e2; }

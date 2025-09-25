@@ -160,9 +160,23 @@ export class ChatUI {
     this.typingEl = null;
   }
 
-  private appendError(text: string) {
+  private appendError(text: string, onRetry?: () => void) {
     const wrap = el('div', 'chat-error');
-    wrap.textContent = text;
+    const msg = el('div', 'chat-error-text');
+    msg.textContent = text;
+    wrap.appendChild(msg);
+    if (onRetry) {
+      const actions = el('div', 'chat-error-actions');
+      const retryBtn = el('button', 'chat-error-retry', { type: 'button', 'aria-label': 'Retry request' }) as HTMLButtonElement;
+      retryBtn.textContent = 'Retry';
+      retryBtn.addEventListener('click', () => {
+        // Remove banner and invoke retry
+        if (wrap.parentElement === this.listEl) this.listEl.removeChild(wrap);
+        onRetry();
+      });
+      actions.appendChild(retryBtn);
+      wrap.appendChild(actions);
+    }
     this.listEl.appendChild(wrap);
     this.listEl.scrollTop = this.listEl.scrollHeight;
   }
@@ -184,24 +198,30 @@ export class ChatUI {
     this.store.saveMessages(messages);
     this.appendMessage(userMsg);
 
+    await this.attemptBotResponse(text);
+  }
+
+  private async attemptBotResponse(text: string): Promise<void> {
     try {
       this.showTyping();
-      // Yield a frame to allow the typing indicator to render before the network await
-      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-      const botMsg = await this.client.sendMessage(text, this.store.getSessionId(), messages, this.config);
+      const botMsg = await this.client.sendMessage(text, this.store.getSessionId(), this.store.getMessages(), this.config);
       this.hideTyping();
+      const messages = this.store.getMessages();
       messages.push(botMsg);
       this.store.saveMessages(messages);
       this.appendMessage(botMsg);
       // Re-enable send button depending on textarea content
       this.sendBtn.disabled = (this.textarea.value.trim().length === 0);
     } catch (err) {
-      // Hide typing indicator and show a friendly error banner
+      // Hide typing indicator and show a friendly error banner with retry
       this.hideTyping();
       // eslint-disable-next-line no-console
       console.error('[chat] request failed', err);
-      this.appendError('There was a problem contacting the assistant. Please try again.');
-      // Allow retry
+      this.appendError('There was a problem contacting the assistant. Please try again.', () => {
+        // Retry the same prompt without duplicating the user message
+        void this.attemptBotResponse(text);
+      });
+      // Allow user to edit/resend
       this.sendBtn.disabled = (this.textarea.value.trim().length === 0);
     }
   }
