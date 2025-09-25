@@ -16,6 +16,7 @@ function serveRootAssets(): Plugin {
         const file = path.join(srcDir, 'chat-basic.css');
         if (fs.existsSync(file)) {
           res.setHeader('Content-Type', 'text/css; charset=utf-8');
+          res.setHeader('Cache-Control', 'no-store, max-age=0');
           fs.createReadStream(file).pipe(res);
           return;
         }
@@ -34,6 +35,7 @@ function serveRootAssets(): Plugin {
             ? 'application/json; charset=utf-8'
             : 'application/octet-stream';
           res.setHeader('Content-Type', ct);
+          res.setHeader('Cache-Control', 'no-store, max-age=0');
           fs.createReadStream(filePath).pipe(res);
           return;
         }

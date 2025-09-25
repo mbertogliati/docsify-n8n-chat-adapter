@@ -1,3 +1,5 @@
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { ChatConfig, ChatMessage, ChatStore, ChatClient } from './types';
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, attrs: Record<string, string> = {}): HTMLElementTagNameMap[K] {
@@ -8,10 +10,17 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, a
 }
 
 function renderMarkdown(text: string): string {
-  // Minimal escape; leave advanced markdown to host css or later enhancement
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML.replace(/\n/g, '<br/>');
+  // Default renderer: real markdown via marked + sanitize with DOMPurify
+  // Fallback to plain text + <br/> if anything goes wrong
+  try {
+    const html = marked.parse(text ?? '');
+    // DOMPurify expects window document in browser environments
+    return DOMPurify.sanitize(typeof html === 'string' ? html : String(html));
+  } catch {
+    const div = document.createElement('div');
+    div.textContent = text ?? '';
+    return div.innerHTML.replace(/\n/g, '<br/>' );
+  }
 }
 
 export interface ChatUIOptions {
@@ -132,7 +141,8 @@ export class ChatUI {
     const item = el('div', `chat-message chat-message-from-${msg.role}`);
     const actions = el('div', 'chat-message-actions');
     const md = el('div', 'chat-message-markdown');
-    md.innerHTML = renderMarkdown(msg.content);
+    const html = this.config.renderMarkdown ? this.config.renderMarkdown(msg.content) : renderMarkdown(msg.content);
+    md.innerHTML = html;
     item.appendChild(actions);
     item.appendChild(md);
     this.listEl.appendChild(item);

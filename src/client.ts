@@ -64,6 +64,7 @@ function defaultTransformResponse(data: unknown): string {
     const d = data as Record<string, any>;
     if (typeof d.text === 'string') return d.text;
     if (typeof d.message === 'string') return d.message;
+    if (typeof d.output === 'string') return d.output;
     if (Array.isArray(d.messages)) return d.messages.map((m: any) => (typeof m === 'string' ? m : JSON.stringify(m))).join('\n');
     return JSON.stringify(d);
   }
