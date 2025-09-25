@@ -47,7 +47,7 @@ export class ChatUI {
   mount(parent: HTMLElement = document.body) {
     const container = el('div', 'chat-window-wrapper n8n-chat', { id: this.opts.containerId || 'n8n-chat' });
     const windowEl = el('div', 'chat-window');
-    const main = el('main', 'chat-layout chat-wrapper');
+    const main = el('div', 'chat-layout chat-wrapper');
 
     // Header
     const header = el('div', 'chat-header');

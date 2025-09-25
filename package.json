@@ -26,7 +26,7 @@
   "files": [
     "dist",
     "src",
-    "src/n8n-chat-adapter.css",
+    "src/docsify-themable.css",
     "src/chat-basic.css",
     "LICENSE",
     "README.md"

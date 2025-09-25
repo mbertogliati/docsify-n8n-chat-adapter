@@ -30,3 +30,19 @@ export default {
   N8nHttpClient,
   ChatUI,
 };
+
+// Auto-register when loaded via <script type="module"> on a Docsify page
+(() => {
+  if (typeof window === 'undefined') return;
+  const w = window as any;
+  try {
+    if (w.$docsify && w.$docsify.n8nChat && !w.__n8nChatAdapterRegistered) {
+      // Prevent double registration
+      w.__n8nChatAdapterRegistered = true;
+      registerDocsifyPlugin(w.$docsify.n8nChat);
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('[docsify-n8n-chat] auto-register failed:', e);
+  }
+})();

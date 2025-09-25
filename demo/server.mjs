@@ -78,8 +78,8 @@ const server = http.createServer((req, res) => {
   }
 
   // Serve CSS from src (for quick iteration)
-  if (parsed.pathname === '/n8n-chat-adapter.css') {
-    const file = path.join(srcDir, 'n8n-chat-adapter.css');
+  if (parsed.pathname === '/docsify-themable.css') {
+    const file = path.join(srcDir, 'docsify-themable.css');
     return serveFile(res, file, 'text/css; charset=utf-8');
   }
   if (parsed.pathname === '/chat-basic.css') {
