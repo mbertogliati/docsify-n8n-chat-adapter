@@ -82,6 +82,10 @@ const server = http.createServer((req, res) => {
     const file = path.join(srcDir, 'n8n-chat-adapter.css');
     return serveFile(res, file, 'text/css; charset=utf-8');
   }
+  if (parsed.pathname === '/chat-basic.css') {
+    const file = path.join(srcDir, 'chat-basic.css');
+    return serveFile(res, file, 'text/css; charset=utf-8');
+  }
 
   // 404 fallback
   send(res, 404, 'Not Found');

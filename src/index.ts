@@ -1,4 +1,7 @@
 import { docsifyN8nChatPlugin } from './plugin';
+import { LocalStorageChatStore } from './storage';
+import { N8nHttpClient } from './client';
+import { ChatUI } from './ui';
 export { docsifyN8nChatPlugin, type DocsifyChatConfig } from './plugin';
 export { LocalStorageChatStore } from './storage';
 export { N8nHttpClient } from './client';

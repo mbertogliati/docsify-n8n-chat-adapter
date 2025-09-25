@@ -26,6 +26,7 @@ export class ChatUI {
   private sendBtn!: HTMLButtonElement;
   private toggleBtn!: HTMLDivElement;
   private resetBtn!: HTMLButtonElement;
+  private typingEl: HTMLElement | null = null;
 
   constructor(
     private readonly store: ChatStore,
@@ -139,6 +140,33 @@ export class ChatUI {
     this.listEl.scrollTop = this.listEl.scrollHeight;
   }
 
+  private showTyping() {
+    if (this.typingEl) return;
+    const item = el('div', 'chat-message chat-message-from-bot typing');
+    const actions = el('div', 'chat-message-actions');
+    const md = el('div', 'chat-message-markdown');
+    md.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+    item.appendChild(actions);
+    item.appendChild(md);
+    this.listEl.appendChild(item);
+    this.typingEl = item;
+    this.listEl.scrollTop = this.listEl.scrollHeight;
+  }
+
+  private hideTyping() {
+    if (this.typingEl && this.typingEl.parentElement === this.listEl) {
+      this.listEl.removeChild(this.typingEl);
+    }
+    this.typingEl = null;
+  }
+
+  private appendError(text: string) {
+    const wrap = el('div', 'chat-error');
+    wrap.textContent = text;
+    this.listEl.appendChild(wrap);
+    this.listEl.scrollTop = this.listEl.scrollHeight;
+  }
+
   private renderMessages(messages: ChatMessage[]) {
     this.listEl.innerHTML = '';
     for (const m of messages) this.appendMessage(m);
@@ -157,16 +185,24 @@ export class ChatUI {
     this.appendMessage(userMsg);
 
     try {
+      this.showTyping();
+      // Yield a frame to allow the typing indicator to render before the network await
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
       const botMsg = await this.client.sendMessage(text, this.store.getSessionId(), messages, this.config);
+      this.hideTyping();
       messages.push(botMsg);
       this.store.saveMessages(messages);
       this.appendMessage(botMsg);
+      // Re-enable send button depending on textarea content
+      this.sendBtn.disabled = (this.textarea.value.trim().length === 0);
     } catch (err) {
-      const errorText = err instanceof Error ? err.message : String(err);
-      const botMsg: ChatMessage = { id: `${Date.now()}-e`, role: 'bot', content: `Error: ${errorText}`, createdAt: Date.now() };
-      messages.push(botMsg);
-      this.store.saveMessages(messages);
-      this.appendMessage(botMsg);
+      // Hide typing indicator and show a friendly error banner
+      this.hideTyping();
+      // eslint-disable-next-line no-console
+      console.error('[chat] request failed', err);
+      this.appendError('There was a problem contacting the assistant. Please try again.');
+      // Allow retry
+      this.sendBtn.disabled = (this.textarea.value.trim().length === 0);
     }
   }
 

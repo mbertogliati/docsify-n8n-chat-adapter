@@ -45,7 +45,7 @@ describe('ChatUI', () => {
     expect(root).toBeTruthy();
     expect(root.classList.contains('open')).toBe(true);
 
-    expect(root.querySelector('.chat-header h1')?.textContent).toBe('Fury App Lookup 🔍');
+    expect(root.querySelector('.chat-header h1')?.textContent).toBe('App Lookup 🔍');
     expect(root.querySelector('.chat-header p')?.textContent).toContain('Busca aquí');
 
     const textarea = root.querySelector('textarea') as HTMLTextAreaElement;

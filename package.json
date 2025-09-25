@@ -27,6 +27,7 @@
     "dist",
     "src",
     "src/n8n-chat-adapter.css",
+    "src/chat-basic.css",
     "LICENSE",
     "README.md"
   ],
