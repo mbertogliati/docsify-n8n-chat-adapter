@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Docsify n8n Chat - Demo</title>
+    <link rel="stylesheet" href="/chat-basic.css" />
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; padding: 24px; }
+      h1 { font-size: 18px; margin: 0 0 12px; }
+      p { color: #555; margin: 0 0 24px; }
+    </style>
+  </head>
+  <body>
+    <h1>Docsify n8n Chat - Manual Demo</h1>
+    <p>This page mounts the chat UI directly. The webhook endpoint echoes your message.</p>
+
+    <script src="/dist/index.umd.js"></script>
+    <script>
+      (function () {
+        const ns = window.DocsifyN8nChatAdapter;
+        const lib = ns && (ns.default ? Object.assign({}, ns.default, ns) : ns);
+        if (!lib) {
+          console.error('UMD library not found');
+          return;
+        }
+        const LocalStorageChatStore = lib.LocalStorageChatStore;
+        const N8nHttpClient = lib.N8nHttpClient;
+        const ChatUI = lib.ChatUI;
+        if (!LocalStorageChatStore || !N8nHttpClient || !ChatUI) {
+          console.error('UMD exports missing', lib);
+          return;
+        }
+
+        const store = new LocalStorageChatStore('demo');
+        const client = new N8nHttpClient();
+        const config = {
+          endpoint: 'http://localhost:8787/chat',
+          title: 'App Lookup',
+          subtitle: 'Busca aquí a qué aplicación pertenece un recurso',
+          placeholder: 'Escribe tu consulta aquí',
+          startOpen: true,
+        };
+
+        const ui = new ChatUI(store, client, config);
+        ui.mount(document.body);
+      })();
+    </script>
+  </body>
+</html>

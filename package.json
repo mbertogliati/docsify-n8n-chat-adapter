@@ -1,9 +1,9 @@
 {
   "name": "@mbertogliati/docsify-n8n-chat-adapter",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Docsify plugin that embeds @n8n/chat with session and UI persistence workarounds.",
   "license": "MIT",
-  "author": "Matias Bertogliati <matias.bertogliati@gmail.com>",
+  "author": "Mateo Bertogliati",
   "homepage": "https://github.com/mbertogliati/docsify-n8n-chat-adapter#readme",
   "repository": {
     "type": "git",
@@ -26,14 +26,22 @@
   "files": [
     "dist",
     "src",
+    "src/docsify-themable.css",
+    "src/chat-basic.css",
     "LICENSE",
     "README.md"
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "rollup -c",
+    "build": "vite build",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev:demo": "vite --config demo/vite.config.ts",
+    "build:demo": "vite build --config demo/vite.config.ts && mkdir -p demo/dist/dist && cp -R dist/* demo/dist/dist && cp src/chat-basic.css demo/dist/chat-basic.css",
+    "preview:demo": "vite preview --config demo/vite.config.ts",
+    "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
   "keywords": [
     "docsify",
@@ -48,6 +56,17 @@
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.22.4"
+    "@rollup/plugin-typescript": "^11.1.6",
+    "rollup": "^4.22.4",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1",
+    "jsdom": "^25.0.0",
+    "vite": "^5.4.8",
+    "@types/node": "^20.11.30"
+  },
+  "dependencies": {
+    "dompurify": "^3.1.6",
+    "marked": "^12.0.2"
   }
 }
