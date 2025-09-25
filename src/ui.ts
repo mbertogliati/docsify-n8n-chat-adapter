@@ -36,6 +36,10 @@ export class ChatUI {
   private toggleBtn!: HTMLDivElement;
   private resetBtn!: HTMLButtonElement;
   private typingEl: HTMLElement | null = null;
+  // Default chevron icon used when the chat is open
+  private readonly openChevronIcon = '<svg viewBox="0 0 24 24" width="32" height="32" class=""><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"></path></svg>';
+  // Default rounded-square chat icon used when the chat is closed (if no custom icon is provided)
+  private readonly closedChatIcon = '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="14" rx="3" ry="3" fill="currentColor"/><path fill="currentColor" d="M8 17h3L6 22v-4h2z"/></svg>';
 
   constructor(
     private readonly store: ChatStore,
@@ -95,12 +99,6 @@ export class ChatUI {
 
     // Toggle docked button
     const toggle = el('div', 'chat-window-toggle', { 'aria-label': this.config.toggleAriaLabel || 'Toggle chat' });
-    // Customizable toggle icon (supports emoji/text or HTML/SVG string)
-    if (this.config.toggleIcon) {
-      toggle.innerHTML = this.config.toggleIcon;
-    } else {
-      toggle.innerHTML = '<svg viewBox="0 0 24 24" width="32" height="32" class=""><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"></path></svg>';
-    }
     container.appendChild(toggle);
 
     parent.appendChild(container);
@@ -132,6 +130,8 @@ export class ChatUI {
     this.toggleBtn.addEventListener('click', () => {
       const willOpen = !this.root.classList.contains('open');
       this.root.classList.toggle('open');
+      // Update the launcher icon to reflect new state
+      this.updateToggleIcon();
       if (willOpen) {
         // Defer to next frame so layout is applied before scrolling
         requestAnimationFrame(() => this.scrollToBottom(true));
@@ -142,6 +142,8 @@ export class ChatUI {
 
     // Initial state
     if (this.config.startOpen) this.root.classList.add('open');
+    // Set initial launcher icon according to the initial open/closed state
+    this.updateToggleIcon();
 
     // Render existing history
     this.renderMessages(this.store.getMessages());
@@ -157,6 +159,18 @@ export class ChatUI {
     } catch {
       // Fallback
       this.bodyEl.scrollTop = this.bodyEl.scrollHeight;
+    }
+  }
+
+  private updateToggleIcon() {
+    if (!this.toggleBtn) return;
+    const isOpen = this.root?.classList.contains('open');
+    if (isOpen) {
+      // When open, always show the default chevron icon
+      this.toggleBtn.innerHTML = this.openChevronIcon;
+    } else {
+      // When closed, show custom icon if provided (supports HTML/SVG), otherwise fallback to chevron
+      this.toggleBtn.innerHTML = this.config.toggleIcon || this.closedChatIcon;
     }
   }
 
