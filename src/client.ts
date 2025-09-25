@@ -2,12 +2,27 @@ import { ChatClient, ChatConfig, ChatMessage } from './types';
 
 export class N8nHttpClient implements ChatClient {
   async sendMessage(message: string, sessionId: string, history: ChatMessage[], config: ChatConfig): Promise<ChatMessage> {
+    // Resolve optional metadata (supports static object or async function)
+    let metadata: Record<string, unknown> | undefined;
+    if (typeof config.metadata === 'function') {
+      metadata = await config.metadata();
+    } else {
+      metadata = config.metadata;
+    }
+
+    // Always include sessionId inside metadata as well
+    const metadataWithSession: Record<string, unknown> | undefined = {
+      ...(metadata || {}),
+      sessionId,
+    };
+
     const payload = config.transformPayload
-      ? config.transformPayload({ message, sessionId, history })
+      ? config.transformPayload({ message, sessionId, history, metadata: metadataWithSession })
       : {
-          message,
+          chatInput: message,
           sessionId,
           history,
+          ...(metadataWithSession ? { metadata: metadataWithSession } : {}),
         };
 
     const res = await fetch(config.endpoint, {
