@@ -1,6 +1,6 @@
 {
   "name": "@mbertogliati/docsify-n8n-chat-adapter",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Docsify plugin that embeds @n8n/chat with session and UI persistence workarounds.",
   "license": "MIT",
   "author": "Mateo Bertogliati",
@@ -33,7 +33,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && cp src/chat-basic.css dist/chat-basic.css && cp src/docsify-themable.css dist/docsify-themable.css",
     "clean": "rm -rf dist",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
