@@ -95,7 +95,12 @@ export class ChatUI {
 
     // Toggle docked button
     const toggle = el('div', 'chat-window-toggle', { 'aria-label': this.config.toggleAriaLabel || 'Toggle chat' });
-    toggle.innerHTML = '<svg viewBox="0 0 24 24" width="32" height="32" class=""><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"></path></svg>';
+    // Customizable toggle icon (supports emoji/text or HTML/SVG string)
+    if (this.config.toggleIcon) {
+      toggle.innerHTML = this.config.toggleIcon;
+    } else {
+      toggle.innerHTML = '<svg viewBox="0 0 24 24" width="32" height="32" class=""><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"></path></svg>';
+    }
     container.appendChild(toggle);
 
     parent.appendChild(container);
@@ -125,7 +130,12 @@ export class ChatUI {
     this.sendBtn.addEventListener('click', () => this.onSend());
 
     this.toggleBtn.addEventListener('click', () => {
+      const willOpen = !this.root.classList.contains('open');
       this.root.classList.toggle('open');
+      if (willOpen) {
+        // Defer to next frame so layout is applied before scrolling
+        requestAnimationFrame(() => this.scrollToBottom(true));
+      }
     });
 
     this.resetBtn.addEventListener('click', () => this.resetChat());
@@ -135,6 +145,19 @@ export class ChatUI {
 
     // Render existing history
     this.renderMessages(this.store.getMessages());
+    // Ensure initial view is scrolled to the bottom (history visible)
+    this.scrollToBottom(false);
+  }
+
+  private scrollToBottom(smooth: boolean = true) {
+    if (!this.bodyEl) return;
+    try {
+      const behavior = smooth ? 'smooth' : 'auto';
+      this.bodyEl.scrollTo({ top: this.bodyEl.scrollHeight, behavior: behavior as ScrollBehavior });
+    } catch {
+      // Fallback
+      this.bodyEl.scrollTop = this.bodyEl.scrollHeight;
+    }
   }
 
   private appendMessage(msg: ChatMessage) {
@@ -147,7 +170,7 @@ export class ChatUI {
     item.appendChild(md);
     this.listEl.appendChild(item);
     // Scroll to bottom
-    this.listEl.scrollTop = this.listEl.scrollHeight;
+    this.scrollToBottom(true);
   }
 
   private showTyping() {
@@ -160,7 +183,7 @@ export class ChatUI {
     item.appendChild(md);
     this.listEl.appendChild(item);
     this.typingEl = item;
-    this.listEl.scrollTop = this.listEl.scrollHeight;
+    this.scrollToBottom(true);
   }
 
   private hideTyping() {
@@ -188,12 +211,14 @@ export class ChatUI {
       wrap.appendChild(actions);
     }
     this.listEl.appendChild(wrap);
-    this.listEl.scrollTop = this.listEl.scrollHeight;
+    this.scrollToBottom(true);
   }
 
   private renderMessages(messages: ChatMessage[]) {
     this.listEl.innerHTML = '';
     for (const m of messages) this.appendMessage(m);
+    // appendMessage already scrolls, but ensure a final scroll pass (non-smooth to avoid long animations on big histories)
+    this.scrollToBottom(false);
   }
 
   private async onSend() {
@@ -239,5 +264,6 @@ export class ChatUI {
   private resetChat() {
     this.store.clear();
     this.renderMessages([]);
+    this.scrollToBottom(false);
   }
 }

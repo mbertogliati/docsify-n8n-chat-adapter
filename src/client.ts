@@ -2,6 +2,16 @@ import { ChatClient, ChatConfig, ChatMessage } from './types';
 
 export class N8nHttpClient implements ChatClient {
   async sendMessage(message: string, sessionId: string, history: ChatMessage[], config: ChatConfig): Promise<ChatMessage> {
+    // Compute history to send based on config
+    const sendHistory = config.sendHistory !== false;
+    let historyToSend: ChatMessage[] = [];
+    if (sendHistory) {
+      if (typeof config.historyWindow === 'number' && config.historyWindow > 0) {
+        historyToSend = history.slice(-config.historyWindow);
+      } else {
+        historyToSend = history;
+      }
+    }
     // Resolve optional metadata (supports static object or async function)
     let metadata: Record<string, unknown> | undefined;
     if (typeof config.metadata === 'function') {
@@ -17,11 +27,11 @@ export class N8nHttpClient implements ChatClient {
     };
 
     const payload = config.transformPayload
-      ? config.transformPayload({ message, sessionId, history, metadata: metadataWithSession })
+      ? config.transformPayload({ message, sessionId, history: historyToSend, metadata: metadataWithSession })
       : {
           chatInput: message,
           sessionId,
-          history,
+          history: historyToSend,
           ...(metadataWithSession ? { metadata: metadataWithSession } : {}),
         };
 
